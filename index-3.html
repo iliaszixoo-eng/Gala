@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golden Store - Real APK Downloader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0D0E10;
+      --bg-sidebar: #16171A;
+      --bg-surface: #212327;
+      --bg-surface-hover: #2B2E33;
+      --accent-gold: #E5B84B;
+      --accent-gold-bg: rgba(229, 184, 75, 0.14);
+      --accent-blue: #A8C7FA;
+      --accent-blue-text: #062E6F;
+      --accent-green: #34A853;
+      --text-primary: #F1F3F4;
+      --text-secondary: #9AA0A6;
+      --border-color: #282A2E;
+      --danger: #F28B82;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 14px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 12px 24px 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 2px 6px rgba(229, 184, 75, 0.35));
+    }
+
+    .brand-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text-primary);
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .nav-btn:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-primary);
+    }
+
+    .nav-btn.active {
+      background-color: var(--accent-gold-bg);
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .nav-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Small Developer Button at Bottom of Sidebar */
+    .dev-footer {
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .dev-small-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background-color: rgba(229, 184, 75, 0.08);
+      border: 1px solid rgba(229, 184, 75, 0.28);
+      color: var(--accent-gold);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dev-small-btn:hover,
+    .dev-small-btn.active {
+      background-color: var(--accent-gold);
+      color: #111214;
+    }
+
+    .dev-small-btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Main Content Area */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px 0 28px;
+      gap: 16px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-color: var(--bg-surface);
+      border: none;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .icon-circle:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .icon-circle svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-gold);
+      display: none;
+    }
+
+    .badge-dot.show {
+      display: block;
+    }
+
+    /* Search Input */
+    .search-box {
+      display: none;
+      align-items: center;
+      background-color: var(--bg-surface);
+      border-radius: 20px;
+      padding: 6px 14px;
+      gap: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .search-box.open {
+      display: flex;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      outline: none;
+      font-size: 13.5px;
+      width: 200px;
+    }
+
+    /* Sub-navigation Tabs */
+    .sub-tabs {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      padding: 16px 28px 0 28px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sub-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    .sub-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .sub-tab.active {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .sub-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: var(--accent-blue);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Content Container */
+    .content-body {
+      padding: 24px 28px 40px 28px;
+      flex: 1;
+    }
+
+    /* View Mode Toggle */
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .view-toggle {
+      display: inline-flex;
+      background-color: var(--bg-surface);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .view-btn {
+      width: 32px;
+      height: 28px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .view-btn.active {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    /* Folder Settings Banner */
+    .folder-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(168, 199, 250, 0.08);
+      border: 1px solid rgba(168, 199, 250, 0.25);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .folder-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .folder-btn {
+      background-color: var(--accent-blue);
+      color: var(--accent-blue-text);
+      border: none;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .folder-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Featured Hero Banner */
+    .hero-card {
+      margin-bottom: 28px;
+      border-radius: 18px;
+      overflow: hidden;
+      background-color: #15171A;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .hero-banner {
+      height: 240px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(13, 14, 16, 0.92) 10%, rgba(13, 14, 16, 0.25) 60%, transparent 100%);
+    }
+
+    .hero-desc {
+      position: relative;
+      z-index: 1;
+      font-size: 13px;
+      color: #E8EAED;
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .hero-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background-color: var(--bg-main);
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #111;
+      background: linear-gradient(135deg, #F6D365, #E5B84B);
+      overflow: hidden;
+    }
+
+    .hero-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .install-pill {
+      background-color: var(--accent-blue);
+      color: var(--accent-blue-text);
+      border: none;
+      padding: 9px 22px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .install-pill:hover {
+      opacity: 0.9;
+    }
+
+    .install-pill.installed {
+      background-color: var(--bg-surface);
+      color: var(--accent-green);
+      border: 1px solid rgba(52, 168, 83, 0.35);
+    }
+
+    /* Apps / Games Grid */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 24px 18px;
+    }
+
+    .items-grid.list-mode {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .app-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 16px;
+      transition: background 0.2s;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .app-card:hover {
+      background-color: rgba(255, 255, 255, 0.04);
+      border-color: var(--border-color);
+    }
+
+    .items-grid.list-mode .app-card {
+      flex-direction: row;
+      text-align: left;
+      justify-content: space-between;
+      background-color: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+    }
+
+    .app-icon-box {
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: #111;
+      background: linear-gradient(135deg, #FCE38A 0%, #E5B84B 100%);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .items-grid.list-mode .app-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      margin-bottom: 0;
+      margin-right: 14px;
+      font-size: 20px;
+    }
+
+    .app-icon-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .app-info {
+      flex: 1;
+      width: 100%;
+    }
+
+    .app-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .app-sub {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .apk-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background-color: rgba(52, 168, 83, 0.16);
+      color: var(--accent-green);
+      margin-bottom: 6px;
+    }
+
+    .apk-badge.url {
+      background-color: rgba(168, 199, 250, 0.16);
+      color: var(--accent-blue);
+    }
+
+    .card-install-btn {
+      margin-top: 8px;
+      background-color: var(--accent-blue);
+      color: var(--accent-blue-text);
+      border: none;
+      padding: 7px 16px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      max-width: 140px;
+    }
+
+    .card-install-btn:hover {
+      opacity: 0.9;
+    }
+
+    .card-install-btn.installed {
+      color: var(--accent-green);
+      background-color: rgba(52, 168, 83, 0.14);
+      border: 1px solid rgba(52, 168, 83, 0.3);
+    }
+
+    /* Progress Bar */
+    .progress-wrap {
+      width: 100%;
+      max-width: 140px;
+      margin-top: 8px;
+      background-color: var(--bg-surface);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--accent-gold);
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 54px;
+      height: 54px;
+      fill: var(--text-primary);
+      margin-bottom: 16px;
+      opacity: 0.85;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 13.5px;
+      max-width: 380px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .gold-cta-btn {
+      background-color: var(--accent-gold);
+      color: #111214;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .gold-cta-btn:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    /* Download Manager Tabs (My Library) */
+    .lib-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--border-color);
+      margin-top: 12px;
+    }
+
+    .lib-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 14px 8px;
+      cursor: pointer;
+      position: relative;
+      text-align: center;
+    }
+
+    .lib-tab.active {
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .lib-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15%;
+      right: 15%;
+      height: 3px;
+      background-color: var(--accent-green);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Developer Console Form */
+    .dev-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .dev-header-card {
+      background: linear-gradient(135deg, rgba(229, 184, 75, 0.15), rgba(22, 23, 26, 0.95));
+      border: 1px solid rgba(229, 184, 75, 0.3);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-bottom: 24px;
+    }
+
+    .dev-form-card {
+      background-color: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 680px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        width: 76px;
+        padding: 16px 8px;
+      }
+      .brand-title, .nav-btn span, .dev-small-btn span {
+        display: none;
+      }
+      .nav-btn, .dev-small-btn {
+        justify-content: center;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-control {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 11px 14px;
+      color: var(--text-primary);
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .apk-upload-box {
+      border: 2px dashed rgba(229, 184, 75, 0.45);
+      background-color: rgba(229, 184, 75, 0.05);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .apk-upload-box:hover {
+      background-color: rgba(229, 184, 75, 0.1);
+      border-color: var(--accent-gold);
+    }
+
+    .type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .type-option {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .type-option.selected {
+      border-color: var(--accent-gold);
+      background-color: var(--accent-gold-bg);
+      color: var(--accent-gold);
+    }
+
+    .icon-presets {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      background-color: var(--bg-surface);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preset-btn.selected {
+      border-color: var(--accent-gold);
+      background-color: var(--accent-gold-bg);
+    }
+
+    .published-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+
+    .delete-btn {
+      background-color: rgba(242, 139, 130, 0.14);
+      color: var(--danger);
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: #202124;
+      color: var(--text-primary);
+      border: 1px solid var(--accent-gold);
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background-color: var(--bg-sidebar);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      padding: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 32 32">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFE27A"/>
+            <stop offset="50%" stop-color="#E5B84B"/>
+            <stop offset="100%" stop-color="#A6781E"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#goldGrad)" d="M6 4.5C6 3.1 7.5 2.2 8.7 2.9L26.8 13.9C28 14.6 28 16.4 26.8 17.1L8.7 28.1C7.5 28.8 6 27.9 6 26.5V4.5Z"/>
+      </svg>
+      <span class="brand-title">Golden Store</span>
+    </div>
+
+    <nav class="nav-list">
+      <button type="button" class="nav-btn active" id="nav-games" onclick="switchPage('games')">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="6" width="20" height="12" rx="4"/>
+          <path d="M6 12h4M8 10v4"/>
+          <circle cx="15" cy="11" r="1" fill="currentColor"/>
+          <circle cx="17" cy="13" r="1" fill="currentColor"/>
+        </svg>
+        <span>Games</span>
+      </button>
+
+      <button type="button" class="nav-btn" id="nav-apps" onclick="switchPage('apps')">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+        <span>Apps</span>
+      </button>
+
+      <button type="button" class="nav-btn" id="nav-library" onclick="switchPage('library')">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4"/>
+          <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+        </svg>
+        <span>My Library</span>
+      </button>
+    </nav>
+
+    <!-- Small Developer Button at Bottom -->
+    <div class="dev-footer">
+      <button type="button" class="dev-small-btn" id="nav-developer" onclick="switchPage('developer')">
+        <svg viewBox="0 0 24 24">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <span>Developers</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <main class="main" id="main-container"></main>
+
+  <!-- Item Details Modal -->
+  <div class="modal-backdrop" id="item-modal" onclick="closeModal(event)">
+    <div class="modal-card" id="modal-content"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // =========================================================
+    // 1. INDEXEDDB REAL APK STORAGE ENGINE (Holds large .apk files)
+    // =========================================================
+    const DB_NAME = 'GoldenStoreRealAPK_DB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'apk_files';
+    let db = null;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+          const database = e.target.result;
+          if (!database.objectStoreNames.contains(STORE_NAME)) {
+            database.createObjectStore(STORE_NAME, { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+        request.onerror = (e) => reject(e);
+      });
+    }
+
+    function saveApkBlobToDB(id, fileBlob, fileName) {
+      return new Promise((resolve, reject) => {
+        if (!db) return reject('DB not initialized');
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.put({ id, blob: fileBlob, fileName });
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = (e) => reject(e);
+      });
+    }
+
+    function getApkBlobFromDB(id) {
+      return new Promise((resolve, reject) => {
+        if (!db) return resolve(null);
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    function deleteApkBlobFromDB(id) {
+      if (!db) return;
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).delete(id);
+    }
+
+    // =========================================================
+    // 2. DIRECTORY PICKER & REAL FILE DOWNLOADER
+    // =========================================================
+    let selectedDirectoryHandle = null; // Stores user's chosen folder handle
+
+    async function chooseDownloadFolder() {
+      if ('showDirectoryPicker' in window) {
+        try {
+          selectedDirectoryHandle = await window.showDirectoryPicker({
+            mode: 'readwrite'
+          });
+          showToast(`Folder selected: "${selectedDirectoryHandle.name}"`);
+          render();
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            showToast('Could not access folder. Using browser Save-As dialog.');
+          }
+        }
+      } else {
+        showToast('Your browser will prompt you to choose a folder when downloading each APK.');
+      }
+    }
+
+    // =========================================================
+    // 3. APPLICATION STATE
+    // =========================================================
+    let currentPage = 'games';
+    let currentSubTab = 'For you';
+    let currentLibTab = 'Active downloads';
+    let viewMode = 'grid';
+    let searchQuery = '';
+    let searchOpen = false;
+
+    // Developer Form State
+    let devType = 'game';
+    let devIconEmoji = '🎮';
+    let devUploadedIcon = '';
+    let devUploadedBanner = '';
+    let devSelectedApkFile = null; // Actual File object (.apk)
+
+    let storeItems = JSON.parse(localStorage.getItem('golden_store_real_items') || '[]');
+    let downloadedIds = JSON.parse(localStorage.getItem('golden_store_real_downloaded') || '[]');
+    let activeDownloads = {}; // { id: progressPercentage }
+
+    function saveMetadata() {
+      localStorage.setItem('golden_store_real_items', JSON.stringify(storeItems));
+      localStorage.setItem('golden_store_real_downloaded', JSON.stringify(downloadedIds));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3200);
+    }
+
+    function switchPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.nav-btn, .dev-small-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('nav-' + page);
+      if (activeBtn) activeBtn.classList.add('active');
+      render();
+    }
+
+    function setSubTab(tab) {
+      currentSubTab = tab;
+      render();
+    }
+
+    function setLibTab(tab) {
+      currentLibTab = tab;
+      render();
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      render();
+    }
+
+    function toggleSearch() {
+      searchOpen = !searchOpen;
+      if (!searchOpen) searchQuery = '';
+      render();
+      if (searchOpen) {
+        const input = document.getElementById('search-input');
+        if (input) input.focus();
+      }
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.toLowerCase();
+      renderContentOnly();
+    }
+
+    // =========================================================
+    // 4. REAL APK DOWNLOAD EXECUTION (STREAMING + FOLDER SAVE)
+    // =========================================================
+    async function downloadRealApk(id, event) {
+      if (event) event.stopPropagation();
+      const item = storeItems.find(i => i.id === id);
+      if (!item) return;
+
+      if (activeDownloads[id] !== undefined) {
+        showToast('Download already in progress...');
+        return;
+      }
+
+      const safeFileName = (item.apkFileName || `${item.name.replace(/[^a-zA-Z0-9_-]/g, '_')}_v${item.version}.apk`);
+
+      try {
+        activeDownloads[id] = 5;
+        render();
+
+        let finalBlob = null;
+
+        // CASE A: Developer uploaded a real .apk file directly in Developer Console
+        if (item.hasLocalApk) {
+          const record = await getApkBlobFromDB(item.id);
+          if (!record || !record.blob) {
+            delete activeDownloads[id];
+            render();
+            showToast('APK file data missing from local storage.');
+            return;
+          }
+          activeDownloads[id] = 60;
+          render();
+          finalBlob = record.blob;
+        }
+        // CASE B: Developer provided a direct remote URL to a real .apk file
+        else if (item.apkUrl) {
+          showToast(`Connecting to server for ${safeFileName}...`);
+          const response = await fetch(item.apkUrl);
+          if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+
+          const contentLength = response.headers.get('content-length');
+          const total = contentLength ? parseInt(contentLength, 10) : 0;
+          const reader = response.body.getReader();
+          const chunks = [];
+          let received = 0;
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            if (total > 0) {
+              activeDownloads[id] = Math.min(95, Math.round((received / total) * 100));
+            } else {
+              activeDownloads[id] = Math.min(90, activeDownloads[id] + 10);
+            }
+            render();
+          }
+
+          finalBlob = new Blob(chunks, { type: 'application/vnd.android.package-archive' });
+        } else {
+          delete activeDownloads[id];
+          render();
+          showToast('No real APK file or URL attached to this release.');
+          return;
+        }
+
+        // SAVE FILE TO USER'S CHOSEN FOLDER
+        // Method 1: User already selected a folder via Directory Picker
+        if (selectedDirectoryHandle) {
+          const fileHandle = await selectedDirectoryHandle.getFileHandle(safeFileName, { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(finalBlob);
+          await writable.close();
+          showToast(`Saved "${safeFileName}" inside "${selectedDirectoryHandle.name}"!`);
+        }
+        // Method 2: Prompt user with native "Save As" Folder Picker dialog
+        else if ('showSaveFilePicker' in window) {
+          const fileHandle = await window.showSaveFilePicker({
+            suggestedName: safeFileName,
+            types: [{
+              description: 'Android Package (APK)',
+              accept: { 'application/vnd.android.package-archive': ['.apk'] }
+            }]
+          });
+          const writable = await fileHandle.createWritable();
+          await writable.write(finalBlob);
+          await writable.close();
+          showToast(`Saved "${safeFileName}" to your chosen folder!`);
+        }
+        // Method 3: Standard browser download fallback (uses browser's configured download folder)
+        else {
+          const blobUrl = URL.createObjectURL(finalBlob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = safeFileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+          showToast(`Downloading "${safeFileName}" to your device...`);
+        }
+
+        delete activeDownloads[id];
+        if (!downloadedIds.includes(id)) {
+          downloadedIds.push(id);
+          saveMetadata();
+        }
+        render();
+
+      } catch (err) {
+        delete activeDownloads[id];
+        render();
+        if (err.name === 'AbortError') {
+          showToast('Download cancelled by user.');
+        } else {
+          console.error(err);
+          showToast('Download failed: Check APK URL or CORS permissions.');
+        }
+      }
+    }
+
+    function removeFromDownloaded(id, event) {
+      if (event) event.stopPropagation();
+      downloadedIds = downloadedIds.filter(item => item !== id);
+      saveMetadata();
+      showToast('Removed from download history');
+      render();
+    }
+
+    function getFilteredItems(type) {
+      let list = storeItems.filter(item => item.type === type);
+
+      if (searchQuery.trim() !== '') {
+        list = list.filter(item =>
+          item.name.toLowerCase().includes(searchQuery) ||
+          (item.developer && item.developer.toLowerCase().includes(searchQuery))
+        );
+      }
+
+      if (currentSubTab === 'Highest rated') {
+        list = [...list].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+      } else if (currentSubTab === 'New & updated') {
+        list = [...list].reverse();
+      }
+
+      return list;
+    }
+
+    function openItemModal(id) {
+      const item = storeItems.find(i => i.id === id);
+      if (!item) return;
+
+      const isDownloaded = downloadedIds.includes(item.id);
+      const isDownloading = activeDownloads[item.id] !== undefined;
+      const modal = document.getElementById('item-modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+          <div class="app-icon-box" style="width:68px; height:68px; margin:0; font-size:28px;">
+            ${item.iconUrl ? `<img src="${item.iconUrl}" alt="">` : item.iconEmoji}
+          </div>
+          <div>
+            <h3 style="font-size:18px; margin-bottom:4px;">${item.name}</h3>
+            <div style="font-size:12.5px; color:var(--accent-gold);">${item.developer || 'Golden Developer'}</div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">
+              v${item.version} • ${item.size} MB • Real .APK Package
+            </div>
+          </div>
+        </div>
+        <div style="background:var(--bg-main); padding:10px 12px; border-radius:10px; font-size:12px; color:var(--text-secondary); margin-bottom:14px; border:1px solid var(--border-color);">
+          <strong>Package File:</strong> ${item.apkFileName || (item.name + '.apk')}<br>
+          <strong>Source:</strong> ${item.hasLocalApk ? 'Uploaded Real APK Binary' : 'Direct Remote Server URL'}
+        </div>
+        <p style="font-size:13.5px; color:#D1D5DB; line-height:1.55; margin-bottom:20px;">
+          ${item.description || 'No description provided by the developer.'}
+        </p>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="card-install-btn" style="margin:0; padding:9px 18px; background:var(--bg-surface); color:var(--text-primary); width:auto;" onclick="closeModal()">Close</button>
+          <button type="button" class="install-pill ${isDownloaded ? 'installed' : ''}"
+            onclick="downloadRealApk('${item.id}'); closeModal();">
+            ${isDownloading ? `Downloading ${activeDownloads[item.id]}%` : isDownloaded ? 'Download APK Again' : 'Download .APK'}
+          </button>
+        </div>
+      `;
+      modal.classList.add('open');
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.id === 'item-modal') {
+        document.getElementById('item-modal').classList.remove('open');
+      }
+    }
+
+    // =========================================================
+    // 5. DEVELOPER CONSOLE HANDLERS
+    // =========================================================
+    function selectDevType(type) {
+      devType = type;
+      devIconEmoji = type === 'game' ? '🎮' : '📱';
+      render();
+    }
+
+    function selectPresetIcon(emoji) {
+      devIconEmoji = emoji;
+      devUploadedIcon = '';
+      render();
+    }
+
+    function handleApkFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+      devSelectedApkFile = file;
+
+      // Auto-fill size in MB and name if empty
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      const sizeInput = document.getElementById('dev-size');
+      if (sizeInput) sizeInput.value = sizeMB;
+
+      const nameInput = document.getElementById('dev-name');
+      if (nameInput && !nameInput.value.trim()) {
+        nameInput.value = file.name.replace(/\.apk$/i, '');
+      }
+
+      const labelEl = document.getElementById('apk-file-label');
+      if (labelEl) {
+        labelEl.innerHTML = `<strong style="color:var(--accent-green);">✓ Selected: ${file.name} (${sizeMB} MB)</strong>`;
+      }
+    }
+
+    function handleImageUpload(input, target) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        if (target === 'icon') devUploadedIcon = e.target.result;
+        if (target === 'banner') devUploadedBanner = e.target.result;
+        showToast('Image loaded!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function publishNewItem(event) {
+      event.preventDefault();
+      const name = document.getElementById('dev-name').value.trim();
+      const developer = document.getElementById('dev-studio').value.trim() || 'Golden Developer';
+      const version = document.getElementById('dev-version').value.trim() || '1.0.0';
+      const size = document.getElementById('dev-size').value.trim() || '10';
+      const apkUrl = document.getElementById('dev-apk-url').value.trim();
+      const category = document.getElementById('dev-category').value;
+      const description = document.getElementById('dev-desc').value.trim();
+
+      if (!name) {
+        showToast('Please enter the app or game name.');
+        return;
+      }
+
+      if (!devSelectedApkFile && !apkUrl) {
+        showToast('Please select a real .apk file OR enter a direct .apk download URL!');
+        return;
+      }
+
+      const id = 'item_' + Date.now();
+      let hasLocalApk = false;
+      let apkFileName = `${name.replace(/[^a-zA-Z0-9_-]/g, '_')}_v${version}.apk`;
+
+      if (devSelectedApkFile) {
+        try {
+          await saveApkBlobToDB(id, devSelectedApkFile, devSelectedApkFile.name);
+          hasLocalApk = true;
+          apkFileName = devSelectedApkFile.name;
+        } catch (e) {
+          showToast('Error saving APK file to browser database.');
+          return;
+        }
+      } else if (apkUrl) {
+        const urlParts = apkUrl.split('/');
+        const lastPart = urlParts[urlParts.length - 1].split('?')[0];
+        if (lastPart && lastPart.toLowerCase().endsWith('.apk')) {
+          apkFileName = lastPart;
+        }
+      }
+
+      const newItem = {
+        id,
+        type: devType,
+        name,
+        developer,
+        version,
+        size,
+        category,
+        description: description || `Real APK release of ${name} on Golden Store.`,
+        rating: '5.0',
+        iconEmoji: devIconEmoji,
+        iconUrl: devUploadedIcon,
+        bannerUrl: devUploadedBanner,
+        hasLocalApk,
+        apkUrl: hasLocalApk ? '' : apkUrl,
+        apkFileName,
+        createdAt: Date.now()
+      };
+
+      storeItems.unshift(newItem);
+      saveMetadata();
+
+      // Reset form buffers
+      devUploadedIcon = '';
+      devUploadedBanner = '';
+      devSelectedApkFile = null;
+
+      showToast(`Real APK "${name}" published to Golden Store!`);
+      switchPage(devType === 'game' ? 'games' : 'apps');
+    }
+
+    function deleteStoreItem(id) {
+      storeItems = storeItems.filter(i => i.id !== id);
+      downloadedIds = downloadedIds.filter(i => i !== id);
+      deleteApkBlobFromDB(id);
+      saveMetadata();
+      showToast('Deleted release and its APK file');
+      render();
+    }
+
+    // =========================================================
+    // 6. UI RENDERING
+    // =========================================================
+    function renderTopbar(showTabs = true) {
+      const tabs = ['For you', 'Most popular', 'Highest rated', 'New & updated', 'Categories'];
+      const hasDownloads = Object.keys(activeDownloads).length > 0;
+
+      return `
+        <header class="topbar">
+          <div class="topbar-left">
+            <svg width="24" height="24" viewBox="0 0 32 32">
+              <path fill="#E5B84B" d="M6 4.5C6 3.1 7.5 2.2 8.7 2.9L26.8 13.9C28 14.6 28 16.4 26.8 17.1L8.7 28.1C7.5 28.8 6 27.9 6 26.5V4.5Z"/>
+            </svg>
+          </div>
+
+          <div class="topbar-actions">
+            <div class="search-box ${searchOpen ? 'open' : ''}">
+              <input type="text" id="search-input" placeholder="Search ${currentPage}..." value="${searchQuery}" oninput="handleSearch(this.value)" />
+            </div>
+
+            <button type="button" class="icon-circle" title="Downloads" onclick="switchPage('library')">
+              <span class="badge-dot ${hasDownloads ? 'show' : ''}"></span>
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4"/>
+                <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+              </svg>
+            </button>
+
+            <button type="button" class="icon-circle" title="Choose Download Folder" onclick="chooseDownloadFolder()">
+              <svg viewBox="0 0 24 24">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+              </svg>
+            </button>
+
+            <button type="button" class="icon-circle" title="Search" onclick="toggleSearch()">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M21 21l-4.35-4.35"/>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        ${showTabs ? `
+          <div class="sub-tabs">
+            ${tabs.map(tab => `
+              <button type="button" class="sub-tab ${currentSubTab === tab ? 'active' : ''}" onclick="setSubTab('${tab}')">
+                ${tab}
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderFolderBanner() {
+      return `
+        <div class="folder-bar">
+          <div class="folder-info">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8C7FA" stroke-width="2">
+              <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+            </svg>
+            <span>
+              <strong>Download Destination:</strong>
+              ${selectedDirectoryHandle
+                ? `<span style="color:var(--accent-green); font-weight:600;">/${selectedDirectoryHandle.name}</span>`
+                : 'Ask me where to save each .APK file'}
+            </span>
+          </div>
+          <button type="button" class="folder-btn" onclick="chooseDownloadFolder()">
+            ${selectedDirectoryHandle ? 'Change Folder' : 'Select Default Folder'}
+          </button>
+        </div>
+      `;
+    }
+
+    function renderStoreCatalog(type) {
+      const items = getFilteredItems(type);
+      const label = type === 'game' ? 'Games' : 'Apps';
+
+      if (items.length === 0) {
+        return `
+          <div class="content-body">
+            ${renderFolderBanner()}
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24">
+                ${type === 'game'
+                  ? '<path d="M6 9h12a4 4 0 014 4v2a3 3 0 01-3 3h-1.5l-2-2h-7l-2 2H5a3 3 0 01-3-3v-2a4 4 0 014-4zm2 3v2h2v-2H8zm7 0a1 1 0 100 2 1 1 0 000-2z"/>'
+                  : '<path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/>'}
+              </svg>
+              <h3>No Real ${label} Uploaded Yet</h3>
+              <p>Upload a real <strong>.apk</strong> file or link a direct <strong>.apk</strong> URL from the Developer Console so users can download it directly to any folder on their device.</p>
+              <button type="button" class="gold-cta-btn" onclick="switchPage('developer')">+ Upload Real ${type === 'game' ? 'Game' : 'App'} (.APK)</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const featured = items[0];
+      const featuredDownloaded = downloadedIds.includes(featured.id);
+      const featuredProgress = activeDownloads[featured.id];
+
+      return `
+        <div class="content-body">
+          ${renderFolderBanner()}
+
+          ${featured.bannerUrl ? `
+            <div class="hero-card" onclick="openItemModal('${featured.id}')">
+              <div class="hero-banner" style="background-image: url('${featured.bannerUrl}')">
+                <p class="hero-desc">${featured.description}</p>
+              </div>
+              <div class="hero-footer">
+                <div class="hero-meta">
+                  <div class="hero-icon">
+                    ${featured.iconUrl ? `<img src="${featured.iconUrl}" alt="">` : featured.iconEmoji}
+                  </div>
+                  <div>
+                    <div style="font-size:14px; font-weight:600;">${featured.name}</div>
+                    <div style="font-size:12px; color:var(--text-secondary);">${featured.developer} • ${featured.size} MB • .APK</div>
+                  </div>
+                </div>
+                <button type="button" class="install-pill ${featuredDownloaded ? 'installed' : ''}"
+                  onclick="downloadRealApk('${featured.id}', event)">
+                  ${featuredProgress !== undefined ? `Downloading ${featuredProgress}%` : featuredDownloaded ? 'Download Again' : 'Download APK'}
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="toolbar-row">
+            <div class="view-toggle">
+              <button type="button" class="view-btn ${viewMode === 'grid' ? 'active' : ''}" onclick="setViewMode('grid')" title="Grid view">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                </svg>
+              </button>
+              <button type="button" class="view-btn ${viewMode === 'list' ? 'active' : ''}" onclick="setViewMode('list')" title="List view">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                  <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+              </button>
+            </div>
+            <span style="font-size:12.5px; color:var(--text-secondary);">${items.length} Real APK ${label}</span>
+          </div>
+
+          <div class="items-grid ${viewMode === 'list' ? 'list-mode' : ''}">
+            ${items.map(item => {
+              const isDown = downloadedIds.includes(item.id);
+              const progress = activeDownloads[item.id];
+              return `
+                <div class="app-card" onclick="openItemModal('${item.id}')">
+                  <div class="app-icon-box">
+                    ${item.iconUrl ? `<img src="${item.iconUrl}" alt="">` : item.iconEmoji}
+                  </div>
+                  <div class="app-info">
+                    <div class="app-title">${item.name}</div>
+                    <div class="app-sub">v${item.version} • ${item.size} MB</div>
+                    <span class="apk-badge ${item.hasLocalApk ? '' : 'url'}">
+                      ${item.hasLocalApk ? 'REAL .APK FILE' : 'DIRECT .APK URL'}
+                    </span>
+                  </div>
+                  ${progress !== undefined ? `
+                    <div class="progress-wrap">
+                      <div class="progress-fill" style="width:${progress}%"></div>
+                    </div>
+                  ` : `
+                    <button type="button" class="card-install-btn ${isDown ? 'installed' : ''}"
+                      onclick="downloadRealApk('${item.id}', event)">
+                      ${isDown ? 'Saved ✓ (Redownload)' : 'Download .APK'}
+                    </button>
+                  `}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLibrary() {
+      const libTabs = ['Active downloads', 'Downloaded', 'Library'];
+      let displayList = [];
+
+      if (currentLibTab === 'Active downloads') {
+        displayList = storeItems.filter(i => activeDownloads[i.id] !== undefined);
+      } else {
+        displayList = storeItems.filter(i => downloadedIds.includes(i.id));
+      }
+
+      return `
+        <header class="topbar" style="padding-bottom:14px;">
+          <div class="topbar-left">
+            <button type="button" class="icon-circle" style="background:transparent;" onclick="switchPage('games')">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+            </button>
+            <h2 style="font-size:18px; font-weight:600;">APK Download manager</h2>
+          </div>
+        </header>
+
+        <div class="lib-tabs">
+          ${libTabs.map(t => `
+            <button type="button" class="lib-tab ${currentLibTab === t ? 'active' : ''}" onclick="setLibTab('${t}')">
+              ${t}
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="content-body">
+          ${renderFolderBanner()}
+
+          ${displayList.length === 0 ? `
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+              <p>No .APK packages in this tab</p>
+            </div>
+          ` : `
+            <div class="items-grid list-mode">
+              ${displayList.map(item => `
+                <div class="app-card" onclick="openItemModal('${item.id}')">
+                  <div class="app-icon-box">
+                    ${item.iconUrl ? `<img src="${item.iconUrl}" alt="">` : item.iconEmoji}
+                  </div>
+                  <div class="app-info">
+                    <div class="app-title">${item.name}</div>
+                    <div class="app-sub">${item.apkFileName} • ${item.size} MB</div>
+                  </div>
+                  ${activeDownloads[item.id] !== undefined
+                    ? `<span style="font-size:12.5px; color:var(--accent-gold); font-weight:600;">${activeDownloads[item.id]}%</span>`
+                    : `<div style="display:flex; gap:8px;">
+                        <button type="button" class="folder-btn" onclick="downloadRealApk('${item.id}', event)">Save APK</button>
+                        <button type="button" class="delete-btn" onclick="removeFromDownloaded('${item.id}', event)">Remove</button>
+                      </div>`
+                  }
+                </div>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function renderDeveloperConsole() {
+      const presets = devType === 'game'
+        ? ['🎮', '⚔️', '🏎️', '🧟', '🚀', '🧩', '🏀', '🐉']
+        : ['📱', '🎬', '🎵', '📸', '💬', '⚡', '🛠️', '🌐'];
+
+      return `
+        <header class="topbar" style="padding-bottom:16px; border-bottom:1px solid var(--border-color);">
+          <div class="topbar-left">
+            <button type="button" class="icon-circle" onclick="switchPage('games')">
+              <svg viewBox="0 0 24 24"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+            </button>
+            <h2 style="font-size:18px; font-weight:700; color:var(--accent-gold);">Golden Developer Console (Real APK Publisher)</h2>
+          </div>
+        </header>
+
+        <div class="content-body">
+          <div class="dev-container">
+            <div class="dev-header-card">
+              <h3 style="font-size:16px; margin-bottom:4px;">Publish Real .APK Packages</h3>
+              <p style="font-size:13px; color:var(--text-secondary);">Attach an actual <strong>.apk</strong> file from your device or enter a direct server download URL. Users will download the real binary file to their chosen folder.</p>
+            </div>
+
+            <form class="dev-form-card" onsubmit="publishNewItem(event)">
+              <div class="form-group">
+                <label>1. Choose Release Type</label>
+                <div class="type-selector">
+                  <button type="button" class="type-option ${devType === 'game' ? 'selected' : ''}" onclick="selectDevType('game')">
+                    🎮 Game (.APK)
+                  </button>
+                  <button type="button" class="type-option ${devType === 'app' ? 'selected' : ''}" onclick="selectDevType('app')">
+                    📱 App (.APK)
+                  </button>
+                </div>
+              </div>
+
+              <!-- REAL APK FILE UPLOAD -->
+              <div class="form-group">
+                <label>2. Attach Real .APK File (Required unless URL is provided below) *</label>
+                <div class="apk-upload-box" onclick="document.getElementById('dev-apk-file').click()">
+                  <input type="file" id="dev-apk-file" accept=".apk,application/vnd.android.package-archive" style="display:none;" onchange="handleApkFileSelect(this)" />
+                  <div style="font-size:24px; margin-bottom:6px;">📦</div>
+                  <div id="apk-file-label" style="font-size:13.5px; color:var(--text-primary);">
+                    Click here to select a real <strong>.apk</strong> file from your device
+                  </div>
+                  <div style="font-size:11.5px; color:var(--text-secondary); margin-top:4px;">
+                    Stored directly in IndexedDB for instant real binary downloads
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>OR Direct Server .APK Download URL (For remote server hosting)</label>
+                <input type="url" id="dev-apk-url" class="form-control" placeholder="https://example.com/downloads/my-game-v1.apk" />
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group" style="margin:0;">
+                  <label>${devType === 'game' ? 'Game' : 'App'} Title *</label>
+                  <input type="text" id="dev-name" class="form-control" placeholder="e.g. Golden Runner" required />
+                </div>
+
+                <div class="form-group" style="margin:0;">
+                  <label>Developer / Studio Name</label>
+                  <input type="text" id="dev-studio" class="form-control" placeholder="e.g. Golden Studios" />
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group" style="margin:0;">
+                  <label>Version</label>
+                  <input type="text" id="dev-version" class="form-control" value="1.0.0" />
+                </div>
+
+                <div class="form-group" style="margin:0;">
+                  <label>File Size (MB)</label>
+                  <input type="text" id="dev-size" class="form-control" value="25.0" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Category</label>
+                <select id="dev-category" class="form-control">
+                  <option value="Action">Action & Adventure</option>
+                  <option value="Casual">Casual</option>
+                  <option value="Tools">Tools & Productivity</option>
+                  <option value="Social">Social & Media</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Choose Icon Preset or Upload Image</label>
+                <div class="icon-presets">
+                  ${presets.map(em => `
+                    <button type="button" class="preset-btn ${devIconEmoji === em && !devUploadedIcon ? 'selected' : ''}"
+                      onclick="selectPresetIcon('${em}')">${em}</button>
+                  `).join('')}
+                </div>
+                <div class="form-grid" style="margin-top:10px; margin-bottom:0;">
+                  <div>
+                    <label style="display:block; margin-bottom:5px;">Custom Icon (Optional)</label>
+                    <input type="file" accept="image/*" class="form-control" style="padding:8px;" onchange="handleImageUpload(this, 'icon')" />
+                  </div>
+                  <div>
+                    <label style="display:block; margin-bottom:5px;">Featured Banner (Optional)</label>
+                    <input type="file" accept="image/*" class="form-control" style="padding:8px;" onchange="handleImageUpload(this, 'banner')" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="dev-desc" rows="3" class="form-control" placeholder="Describe your ${devType}..."></textarea>
+              </div>
+
+              <button type="submit" class="gold-cta-btn" style="width:100%; padding:13px; font-size:14px;">
+                Publish Real .APK to Golden Store
+              </button>
+            </form>
+
+            ${storeItems.length > 0 ? `
+              <h3 style="font-size:15px; margin-bottom:12px;">Published Real APK Packages (${storeItems.length})</h3>
+              ${storeItems.map(item => `
+                <div class="published-row">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="app-icon-box" style="width:42px; height:42px; border-radius:10px; margin:0; font-size:18px;">
+                      ${item.iconUrl ? `<img src="${item.iconUrl}" alt="">` : item.iconEmoji}
+                    </div>
+                    <div>
+                      <div style="font-size:13.5px; font-weight:600;">${item.name}</div>
+                      <div style="font-size:11.5px; color:var(--text-secondary);">
+                        ${item.apkFileName} • ${item.size} MB • ${item.hasLocalApk ? 'Local Binary' : 'Remote URL'}
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="delete-btn" onclick="deleteStoreItem('${item.id}')">Delete</button>
+                </div>
+              `).join('')}
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderContentOnly() {
+      const container = document.getElementById('main-container');
+      if (currentPage === 'games') {
+        container.innerHTML = renderTopbar(true) + renderStoreCatalog('game');
+      } else if (currentPage === 'apps') {
+        container.innerHTML = renderTopbar(true) + renderStoreCatalog('app');
+      }
+      if (searchOpen) {
+        const input = document.getElementById('search-input');
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }
+    }
+
+    function render() {
+      const container = document.getElementById('main-container');
+      if (currentPage === 'games') {
+        container.innerHTML = renderTopbar(true) + renderStoreCatalog('game');
+      } else if (currentPage === 'apps') {
+        container.innerHTML = renderTopbar(true) + renderStoreCatalog('app');
+      } else if (currentPage === 'library') {
+        container.innerHTML = renderLibrary();
+      } else if (currentPage === 'developer') {
+        container.innerHTML = renderDeveloperConsole();
+      }
+    }
+
+    // Initialize IndexedDB then Render
+    initDB().then(() => {
+      render();
+    }).catch(() => {
+      render();
+    });
+  </script>
+</body>
+</html>
